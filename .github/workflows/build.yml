@@ -1,0 +1,29 @@
+name: Build niri for aarch64
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libwayland-dev libxkbcommon-dev \
+            libinput-dev libudev-dev libgbm-dev libseat-dev libpixman-1-dev \
+            libsystemd-dev libdisplay-info-dev libclang-dev \
+            libpipewire-0.3-dev libspa-0.2-dev \
+            libpango1.0-dev libcairo2-dev libgdk-pixbuf-2.0-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
+        run: cargo build --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: niri-aarch64
+          path: target/release/niri
